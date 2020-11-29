@@ -421,40 +421,152 @@ public class Action {
         JSONObject obj;
         switch (this.type) {
             case "standard":
-                try {
-                    obj = fileWriter.writeFile(this.actionId,
-                            null,
-                            "StandardRecommendation result: "
-                                    + UtilRecommendation.standard( this, shows, users));
-                    arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                if (UtilRecommendation.standard(this, shows, users) == null) {
+                    try {
+                        obj = fileWriter.writeFile(this.actionId,
+                                null,
+                                "StandardRecommendation cannot be applied!");
+                        arrayResult.add(obj);
+                    } catch (IOException e) {
+                        System.out.println("not good 2");
+                    }
+                } else {
+                    try {
+                        obj = fileWriter.writeFile(this.actionId,
+                                null,
+                                "StandardRecommendation result: "
+                                        + UtilRecommendation.standard(this, shows, users));
+                        arrayResult.add(obj);
+                    } catch (IOException e) {
+                        System.out.println("not good 2");
+                    }
                 }
                 break;
             case "best_unseen":
-                try {
-                    obj = fileWriter.writeFile(this.actionId,
-                            null,
-                            "BestRatedUnseenRecommendation result: "
-                                    + UtilRecommendation.bestUnseen( this, shows, users));
-                    arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                if (UtilRecommendation.bestUnseen(this, shows, users) == null) {
+                    try {
+                        obj = fileWriter.writeFile(this.actionId,
+                                null,
+                                "BestRatedUnseenRecommendation cannot be applied!");
+                        arrayResult.add(obj);
+                    } catch (IOException e) {
+                        System.out.println("not good 2");
+                    }
+                } else {
+                    try {
+                        obj = fileWriter.writeFile(this.actionId,
+                                null,
+                                "BestRatedUnseenRecommendation result: "
+                                        + UtilRecommendation.bestUnseen(this, shows, users));
+                        arrayResult.add(obj);
+                    } catch (IOException e) {
+                        System.out.println("not good 2");
+                    }
                 }
                 break;
             case "favorite":
+                if(user.getSubscriptionType().equals("PREMIUM")) {
+                    if (UtilRecommendation.favorite(this, shows, users) == null) {
+                        try {
+                            obj = fileWriter.writeFile(this.actionId,
+                                    null,
+                                    "FavoriteRecommendation cannot be applied!");
+                            arrayResult.add(obj);
+                        } catch (IOException e) {
+                            System.out.println("not good 2");
+                        }
+                    } else {
+                        try {
+                            obj = fileWriter.writeFile(this.actionId,
+                                    null,
+                                    "FavoriteRecommendation result: "
+                                            + UtilRecommendation.favorite(this, shows, users));
+                            arrayResult.add(obj);
+                        } catch (IOException e) {
+                            System.out.println("not good 2");
+                        }
+                    }
+                }
+                else{
+                    try {
+                        obj = fileWriter.writeFile(this.actionId,
+                                null,
+                                "FavoriteRecommendation cannot be applied!");
+                        arrayResult.add(obj);
+                    } catch (IOException e) {
+                        System.out.println("not good 2");
+                    }
+                }
+                break;
             case "popular":
-                try {
-                    obj = fileWriter.writeFile(this.actionId,
-                            null,
-                            "PopularRecommendation result: "
-                                    + UtilRecommendation.popular( this, shows, users));
-                    arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                if(user.getSubscriptionType().equals("PREMIUM")) {
+                    if (UtilRecommendation.popular(this, shows, users) == null) {
+                        try {
+                            obj = fileWriter.writeFile(this.actionId,
+                                    null,
+                                    "PopularRecommendation cannot be applied!");
+                            arrayResult.add(obj);
+                        } catch (IOException e) {
+                            System.out.println("not good 2");
+                        }
+                    } else {
+                        try {
+                            obj = fileWriter.writeFile(this.actionId,
+                                    null,
+                                    "PopularRecommendation result: "
+                                            + UtilRecommendation.popular(this, shows, users));
+                            arrayResult.add(obj);
+                        } catch (IOException e) {
+                            System.out.println("not good 2");
+                        }
+                    }
+                }
+                else{
+                    try {
+                        obj = fileWriter.writeFile(this.actionId,
+                                null,
+                                "PopularRecommendation cannot be applied!");
+                        arrayResult.add(obj);
+                    } catch (IOException e) {
+                        System.out.println("not good 2");
+                    }
                 }
                 break;
             case "search":
+                if(user.getSubscriptionType().equals("PREMIUM")) {
+                    if(UtilRecommendation.search(this, shows, users).isEmpty()){
+                        try {
+                            obj = fileWriter.writeFile(this.actionId,
+                                    null,
+                                    "SearchRecommendation cannot be applied!");
+                            arrayResult.add(obj);
+                        } catch (IOException e) {
+                            System.out.println("not good 2");
+                        }
+                    }
+                    else{
+                        try {
+                            obj = fileWriter.writeFile(this.actionId,
+                                    null,
+                                    "SearchRecommendation result: "
+                                            + UtilRecommendation.search(this, shows, users));
+                            arrayResult.add(obj);
+                        } catch (IOException e) {
+                            System.out.println("not good 2");
+                        }
+                    }
+                }
+                else{
+                    try {
+                        obj = fileWriter.writeFile(this.actionId,
+                                null,
+                                "SearchRecommendation cannot be applied!");
+                        arrayResult.add(obj);
+                    } catch (IOException e) {
+                        System.out.println("not good 2");
+                    }
+                }
+                break;
         }
     }
 

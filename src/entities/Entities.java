@@ -91,18 +91,26 @@ public class Entities {
                 .collect(Collectors.toList());;
     }
 
-    public void solve() {
-        for (int i = 0; i < commands.size(); i++) {
-            commands.get(i).solveCommand(findUser(commands.get(i).getUsername()),
-                    findShow(commands.get(i).getTitle()), fileWritter, arrayResult);
-        }
-        for (int i = 0; i < queries.size(); i++) {
-            queries.get(i).solveQueries(findUser(queries.get(i).getUsername()),
-                    findShow(queries.get(i).getTitle()), fileWritter, arrayResult, shows, users, actors);
-        }
-        for (int i = 0; i < recommendations.size(); i++) {
-            recommendations.get(i).solveRecommendations(findUser(recommendations.get(i).getUsername()),
-                    findShow(recommendations.get(i).getTitle()), fileWritter, arrayResult, shows, users, actors);
+    public void solve(Input input) {
+        int j = 0, z = 0, t = 0;
+        for (int i = 0; i < input.getCommands().size(); i++) {
+            String actionType = input.getCommands().get(i).getActionType();
+            if(actionType.equals(Constants.COMMAND)){
+                commands.get(j).solveCommand(findUser(commands.get(j).getUsername()),
+                        findShow(commands.get(j).getTitle()), fileWritter, arrayResult);
+                j++;
+            }
+            else if(actionType.equals(Constants.QUERY)){
+                queries.get(z).solveQueries(findUser(queries.get(z).getUsername()),
+                        findShow(queries.get(z).getTitle()), fileWritter, arrayResult, shows, users, actors);
+                z++;
+            }
+            else if(actionType.equals(Constants.RECOMMENDATION)){
+                recommendations.get(t).solveRecommendations(findUser(recommendations.get(t).getUsername()),
+                        findShow(recommendations.get(t).getTitle()), fileWritter, arrayResult, shows, users, actors);
+                t++;
+            }
+
         }
     }
 

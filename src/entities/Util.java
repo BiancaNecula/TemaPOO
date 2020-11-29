@@ -1,5 +1,6 @@
 package entities;
 
+import actor.ActorsAwards;
 import entertainment.Season;
 
 import java.util.*;
@@ -66,10 +67,15 @@ public class Util {
 
     public static ArrayList<String> awards(Show show, Action query, List<Actor> actors) {
         Map<String, Integer> actorsAwards = new HashMap<>();
+        ArrayList<String> awardsString = new ArrayList<>();
         for (Actor a : actors){
-            if(a.getAwards().keySet().containsAll(query.getFilters().get(3))){
-                actorsAwards.put(a.getName(), a.getAwards().size());
+            for(ActorsAwards aw : a.getAwards().keySet()) {
+                awardsString.add(aw.toString());
             }
+            if(awardsString.containsAll(query.getFilters().get(3))){
+               actorsAwards.put(a.getName(), (int) a.getAwards().values().stream().mapToLong(Integer::longValue).sum());
+            }
+            awardsString.clear();
         }
         Map<String, Integer> sorted;
         if(query.getSortType() == "desc") {

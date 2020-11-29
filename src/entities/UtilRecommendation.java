@@ -94,4 +94,50 @@ public class UtilRecommendation {
         }
         return null;
     }
+
+    public static String favorite(Action recommandation, List<Show> shows, List<User> users) {
+        Map<String, Integer> favoriteTop = new LinkedHashMap<>();
+        for(Show s : shows){
+            favoriteTop.put(s.getTitle(), 0);
+        }
+        for(User u : users){
+            for(String fav : u.getFavoriteMovies()){
+                if(favoriteTop.containsKey(fav)) {
+                    int value = favoriteTop.get(fav);
+                    favoriteTop.put(fav, value + 1);
+                }
+            }
+        }
+
+        favoriteTop =
+                favoriteTop.entrySet().stream()
+                        .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        for(String sh : favoriteTop.keySet()){
+            if (!findUser(recommandation.getUsername(), users).getHistory().containsKey(sh)){
+                return sh;
+            }
+        }
+        return null;
+    }
+
+    public static ArrayList<String> search(Action recommandation, List<Show> shows, List<User> users) {
+        Map<String, Double> searchFilter = new LinkedHashMap<>();
+        for(Show sh : shows){
+            if(sh.getGenres().contains(recommandation.getGenre())
+                    && !findUser(recommandation.getUsername(), users).getHistory().containsKey(sh.getTitle())){
+                searchFilter.put(sh.getTitle(), sh.getRatings().stream().mapToDouble(Double::doubleValue).sum() / sh.getRatings().size());
+            }
+        }
+        searchFilter =
+                searchFilter.entrySet().stream()
+                        .sorted(Map.Entry.<String, Double>comparingByValue().thenComparing(Map.Entry.comparingByKey()))
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        ArrayList<String> recommandationSearch = new ArrayList<>(searchFilter.keySet());
+        return recommandationSearch;
+    }
 }

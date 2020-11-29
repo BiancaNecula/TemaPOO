@@ -73,7 +73,7 @@ public final class Main {
 
         //System.out.println(input.getCommands());
         Entities entity = new Entities(input, fileWriter, arrayResult);
-        entity.solve();
+        entity.solve(input);
         
 
         fileWriter.closeJSON(arrayResult);
