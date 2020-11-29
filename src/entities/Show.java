@@ -22,6 +22,10 @@ public abstract class Show {
      */
     private final ArrayList<String> genres;
 
+    private int duration;
+
+    private int views;
+
     private ArrayList<Double> ratings = new ArrayList<>();
 
     public Show(final String title, final int year,
@@ -54,5 +58,17 @@ public abstract class Show {
 
     public ArrayList<Double> getRatings() {
         return ratings;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public int getViews() {
+        return views;
+    }
+
+    public void setViews(int views) {
+        this.views = views;
     }
 }

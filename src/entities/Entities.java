@@ -66,7 +66,7 @@ public class Entities {
                     queries.add(new Action(input.getCommands().get(i).getActionId(),
                             input.getCommands().get(i).getActionType(),
                             input.getCommands().get(i).getObjectType(),
-                            input.getCommands().get(i).getGenre(),
+                            input.getCommands().get(i).getFilters().get(1).get(0),
                             input.getCommands().get(i).getSortType(),
                             input.getCommands().get(i).getCriteria(),
                             input.getCommands().get(i).getFilters().get(0).get(0),
@@ -86,7 +86,7 @@ public class Entities {
                 default:
             }
         }
-        shows = Stream.of(serials, movies)
+        shows = Stream.of(movies, serials)
                 .flatMap(x -> x.stream())
                 .collect(Collectors.toList());;
     }
@@ -98,7 +98,11 @@ public class Entities {
         }
         for (int i = 0; i < queries.size(); i++) {
             queries.get(i).solveQueries(findUser(queries.get(i).getUsername()),
-                    findShow(queries.get(i).getTitle()), fileWritter, arrayResult, shows, users);
+                    findShow(queries.get(i).getTitle()), fileWritter, arrayResult, shows, users, actors);
+        }
+        for (int i = 0; i < recommendations.size(); i++) {
+            recommendations.get(i).solveRecommendations(findUser(recommendations.get(i).getUsername()),
+                    findShow(recommendations.get(i).getTitle()), fileWritter, arrayResult, shows, users, actors);
         }
     }
 

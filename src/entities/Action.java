@@ -241,6 +241,7 @@ public class Action {
                 else {
                     user.getHistory().put(this.title, 1);
                 }
+                show.setViews(show.getViews() + 1);
                 try {
                     obj = fileWriter.writeFile(this.actionId,
                             null,
@@ -267,7 +268,7 @@ public class Action {
                     } catch (IOException e) {
                         System.out.println("not good 2");
                     }
-                    break;
+                    return;
                 }
                 if(user.getRating().containsKey(mp)){
                     try {
@@ -316,7 +317,9 @@ public class Action {
 
         }
     }
-    public void solveQueries(User user, Show show, Writer fileWriter, JSONArray arrayResult, List<Show> shows, List<User> users) {
+    public void solveQueries(User user, Show show, Writer fileWriter,
+                             JSONArray arrayResult, List<Show> shows,
+                             List<User> users, List<Actor> actors) {
         JSONObject obj;
         switch (this.criteria){
             case "average":
@@ -331,8 +334,70 @@ public class Action {
                 }
                 break;
             case "awards":
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "Query result: "
+                                    + Util.awards(show, this, actors));
+                    arrayResult.add(obj);
+                } catch (IOException e) {
+                    System.out.println("not good 2");
+                }
                 break;
             case "filter_description":
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "Query result: "
+                                    + Util.filterDescription(show, this, actors));
+                    arrayResult.add(obj);
+                } catch (IOException e) {
+                    System.out.println("not good 2");
+                }
+                break;
+            case "ratings":
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "Query result: "
+                                    + Util.firstNVideosRating(show, this, shows));
+                    arrayResult.add(obj);
+                } catch (IOException e) {
+                    System.out.println("not good 2");
+                }
+                break;
+            case "favorite":
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "Query result: "
+                                    + Util.firstNVideosFavourite(this, users, shows));
+                    arrayResult.add(obj);
+                } catch (IOException e) {
+                    System.out.println("not good 2");
+                }
+                break;
+            case "longest":
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "Query result: "
+                                    + Util.firstNVideosLongest(show, this, shows));
+                    arrayResult.add(obj);
+                } catch (IOException e) {
+                    System.out.println("not good 2");
+                }
+                break;
+            case "most_viewed":
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "Query result: "
+                                    + Util.firstNVideosMostViewed(show, this, shows, users));
+                    arrayResult.add(obj);
+                } catch (IOException e) {
+                    System.out.println("not good 2");
+                }
                 break;
             case "num_ratings":
                 try {
@@ -347,6 +412,49 @@ public class Action {
                 break;
 
 
+        }
+    }
+
+    public void solveRecommendations(User user, Show show, Writer fileWriter,
+                             JSONArray arrayResult, List<Show> shows,
+                             List<User> users, List<Actor> actors) {
+        JSONObject obj;
+        switch (this.type) {
+            case "standard":
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "StandardRecommendation result: "
+                                    + UtilRecommendation.standard( this, shows, users));
+                    arrayResult.add(obj);
+                } catch (IOException e) {
+                    System.out.println("not good 2");
+                }
+                break;
+            case "best_unseen":
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "BestRatedUnseenRecommendation result: "
+                                    + UtilRecommendation.bestUnseen( this, shows, users));
+                    arrayResult.add(obj);
+                } catch (IOException e) {
+                    System.out.println("not good 2");
+                }
+                break;
+            case "favorite":
+            case "popular":
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "PopularRecommendation result: "
+                                    + UtilRecommendation.popular( this, shows, users));
+                    arrayResult.add(obj);
+                } catch (IOException e) {
+                    System.out.println("not good 2");
+                }
+                break;
+            case "search":
         }
     }
 

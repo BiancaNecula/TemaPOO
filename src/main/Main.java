@@ -54,8 +54,8 @@ public final class Main {
         }
 
         checker.iterateFiles(Constants.RESULT_PATH, Constants.REF_PATH, Constants.TESTS_PATH);
-        Checkstyle test = new Checkstyle();
-        test.testCheckstyle();
+       // Checkstyle test = new Checkstyle();
+        //test.testCheckstyle();
     }
 
     /**

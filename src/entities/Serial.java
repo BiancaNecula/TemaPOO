@@ -15,6 +15,10 @@ public class Serial extends Show{
      */
     private final ArrayList<Season> seasons;
 
+    private int duration;
+
+    private int views;
+
 
     public Serial(final String title, final ArrayList<String> cast,
                            final ArrayList<String> genres,
@@ -33,6 +37,23 @@ public class Serial extends Show{
         return seasons;
     }
 
+    @Override
+    public int getViews() {
+        return views;
+    }
+
+    @Override
+    public void setViews(int views) {
+        this.views = views;
+    }
+
+    @Override
+    public int getDuration() {
+        for(Season s : this.getSeasons()){
+            duration += s.getDuration();
+        }
+        return duration;
+    }
 
     @Override
     public String toString() {

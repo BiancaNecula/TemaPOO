@@ -10,6 +10,8 @@ public class Movie extends Show{
      */
     private final int duration;
 
+    private int views;
+
     private ArrayList<Double> ratings = new ArrayList<Double>();
 
     public Movie(final String title, final ArrayList<String> cast,
@@ -41,4 +43,13 @@ public class Movie extends Show{
         return ratings;
     }
 
+    @Override
+    public int getViews() {
+        return views;
+    }
+
+    @Override
+    public void setViews(int views) {
+        this.views = views;
+    }
 }
