@@ -2,9 +2,10 @@ package entities;
 
 import actor.ActorsAwards;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 
-public class Actor {
+public final class Actor {
     /**
      * actor name
      */
@@ -20,9 +21,8 @@ public class Actor {
     /**
      * awards won by the actor
      */
-    private Map<ActorsAwards, Integer> awards;
+    private final Map<ActorsAwards, Integer> awards;
 
-    private Map<String, Double> show_rating = new HashMap<>();
     public Actor(final String name, final String careerDescription,
                           final ArrayList<String> filmography,
                           final Map<ActorsAwards, Integer> awards) {

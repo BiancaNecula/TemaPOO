@@ -54,8 +54,8 @@ public final class Main {
         }
 
         checker.iterateFiles(Constants.RESULT_PATH, Constants.REF_PATH, Constants.TESTS_PATH);
-       // Checkstyle test = new Checkstyle();
-        //test.testCheckstyle();
+        Checkstyle test = new Checkstyle();
+        test.testCheckstyle();
     }
 
     /**
@@ -71,10 +71,8 @@ public final class Main {
         Writer fileWriter = new Writer(filePath2);
         JSONArray arrayResult = new JSONArray();
 
-        //System.out.println(input.getCommands());
         Entities entity = new Entities(input, fileWriter, arrayResult);
         entity.solve(input);
-        
 
         fileWriter.closeJSON(arrayResult);
     }

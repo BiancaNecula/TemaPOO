@@ -1,14 +1,18 @@
 package entities;
 
-import common.Constants;
 import fileio.Writer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Collections;
 
-public class Action {
+
+public final class Action {
     /**
      * Action id
      */
@@ -187,14 +191,21 @@ public class Action {
                 + ", filters=" + filters
                 + '}' + "\n";
     }
-    public void solveCommand(User user, Show show, Writer fileWriter, JSONArray arrayResult){
+
+    /**
+     * @param user this user
+     * @param show this show
+     * @param fileWriter writer
+     * @param arrayResult for writing as JSON
+     */
+    public void solveCommand(final User user, final Show show, final Writer fileWriter,
+                             final JSONArray arrayResult) {
         int value;
         JSONObject obj;
-        switch (this.getType()){
-            case "favorite":
-                boolean found = false;
-                for(int i = 0; i < user.getFavoriteMovies().size(); i++){
-                    if(user.getFavoriteMovies().get(i).equals(this.title)){
+        switch (this.getType()) {
+            case "favorite" -> {
+                for (int i = 0; i < user.getFavoriteMovies().size(); i++) {
+                    if (user.getFavoriteMovies().get(i).equals(this.title)) {
                         try {
                             obj = fileWriter.writeFile(this.actionId,
                                     null,
@@ -202,13 +213,12 @@ public class Action {
                                             + this.title
                                             + " is already in favourite list");
                             arrayResult.add(obj);
-                        } catch (IOException e) {
-                            System.out.println("not good");
+                        } catch (IOException ignored) {
                         }
                         return;
                     }
                 }
-                if(!user.getHistory().containsKey(this.title)){
+                if (!user.getHistory().containsKey(this.title)) {
                     try {
                         obj = fileWriter.writeFile(this.actionId,
                                 null,
@@ -217,8 +227,7 @@ public class Action {
                                         + " is not seen");
                         arrayResult.add(obj);
                         break;
-                    } catch (IOException e) {
-                        System.out.println("not good 2");
+                    } catch (IOException ignored) {
                     }
                 }
                 user.getFavoriteMovies().add(this.title);
@@ -229,19 +238,16 @@ public class Action {
                                     + this.title
                                     + " was added as favourite");
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
-                break;
-            case "view":
-                if(user.getHistory().containsKey(this.title)){
+            }
+            case "view" -> {
+                if (user.getHistory().containsKey(this.title)) {
                     value = user.getHistory().get(this.title);
-                    user.getHistory().put(this.title, value+1);
-                }
-                else {
+                    user.getHistory().put(this.title, value + 1);
+                } else {
                     user.getHistory().put(this.title, 1);
                 }
-                show.setViews(show.getViews() + 1);
                 try {
                     obj = fileWriter.writeFile(this.actionId,
                             null,
@@ -250,14 +256,13 @@ public class Action {
                                     + " was viewed with total views of "
                                     + user.getHistory().get(this.title));
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
-                break;
-            case "rating":
+            }
+            case "rating" -> {
                 Map<String, Integer> mp = new HashMap<>();
                 mp.put(this.title, this.getSeasonNumber());
-                if(!user.getHistory().containsKey(this.title)){
+                if (!user.getHistory().containsKey(this.title)) {
                     try {
                         obj = fileWriter.writeFile(this.actionId,
                                 null,
@@ -265,12 +270,11 @@ public class Action {
                                         + this.title
                                         + " is not seen");
                         arrayResult.add(obj);
-                    } catch (IOException e) {
-                        System.out.println("not good 2");
+                    } catch (IOException ignored) {
                     }
                     return;
                 }
-                if(user.getRating().containsKey(mp)){
+                if (user.getRating().containsKey(mp)) {
                     try {
                         obj = fileWriter.writeFile(this.actionId,
                                 null,
@@ -278,59 +282,53 @@ public class Action {
                                         + this.title
                                         + " has been already rated");
                         arrayResult.add(obj);
-                    } catch (IOException e) {
-                        System.out.println("not good 2");
+                    } catch (IOException ignored) {
                     }
                     break;
                 }
                 user.getRating().put(mp, this.grade);
-                if(this.getSeasonNumber() != 0){
-                    show.getSeasons().get(this.getSeasonNumber()-1).getRatings().add(this.grade);
-                    try {
-                        obj = fileWriter.writeFile(this.actionId,
-                                null,
-                                "success -> "
-                                        + this.title
-                                        + " was rated with "
-                                        + this.grade
-                                        + " by " + user.getUsername());
-                        arrayResult.add(obj);
-                    } catch (IOException e) {
-                        System.out.println("not good 2");
-                    }
-                }
-                else{
+                if (this.getSeasonNumber() != 0) {
+                    show.getSeasons().get(this.getSeasonNumber() - 1).getRatings().add(this.grade);
+                } else {
                     show.getRatings().add(this.grade);
-                    try {
-                        obj = fileWriter.writeFile(this.actionId,
-                                null,
-                                "success -> "
-                                        + this.title
-                                        + " was rated with "
-                                        + this.grade
-                                        + " by " + user.getUsername());
-                        arrayResult.add(obj);
-                    } catch (IOException e) {
-                        System.out.println("not good 2");
-                    }
                 }
-
+                try {
+                    obj = fileWriter.writeFile(this.actionId,
+                            null,
+                            "success -> "
+                                    + this.title
+                                    + " was rated with "
+                                    + this.grade
+                                    + " by " + user.getUsername());
+                    arrayResult.add(obj);
+                } catch (IOException ignored) {
+                }
+            }
+            default -> {
+            }
         }
     }
-    public void solveQueries(User user, Show show, Writer fileWriter,
-                             JSONArray arrayResult, List<Show> shows,
-                             List<User> users, List<Actor> actors) {
+
+    /**
+     * @param fileWriter writer
+     * @param arrayResult for writing as JSON
+     * @param shows list of shows
+     * @param users list of users
+     * @param actors list of actors
+     */
+    public void solveQueries(final Writer fileWriter,
+                             final JSONArray arrayResult, final List<Show> shows,
+                             final List<User> users, final List<Actor> actors) {
         JSONObject obj;
-        switch (this.criteria){
+        switch (this.criteria) {
             case "average":
                 try {
                     obj = fileWriter.writeFile(this.actionId,
                             null,
                             "Query result: "
-                                    + Util.firstNActors(show, this, shows));
+                                    + Util.firstNActors(this, shows));
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
                 break;
             case "awards":
@@ -338,10 +336,9 @@ public class Action {
                     obj = fileWriter.writeFile(this.actionId,
                             null,
                             "Query result: "
-                                    + Util.awards(show, this, actors));
+                                    + Util.awards(this, actors));
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
                 break;
             case "filter_description":
@@ -349,10 +346,9 @@ public class Action {
                     obj = fileWriter.writeFile(this.actionId,
                             null,
                             "Query result: "
-                                    + Util.filterDescription(show, this, actors));
+                                    + Util.filterDescription(this, actors));
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
                 break;
             case "ratings":
@@ -360,10 +356,9 @@ public class Action {
                     obj = fileWriter.writeFile(this.actionId,
                             null,
                             "Query result: "
-                                    + Util.firstNVideosRating(show, this, shows));
+                                    + Util.firstNVideosRating(this, shows));
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
                 break;
             case "favorite":
@@ -373,8 +368,7 @@ public class Action {
                             "Query result: "
                                     + Util.firstNVideosFavourite(this, users, shows));
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
                 break;
             case "longest":
@@ -382,10 +376,9 @@ public class Action {
                     obj = fileWriter.writeFile(this.actionId,
                             null,
                             "Query result: "
-                                    + Util.firstNVideosLongest(show, this, shows));
+                                    + Util.firstNVideosLongest(this, shows));
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
                 break;
             case "most_viewed":
@@ -393,10 +386,9 @@ public class Action {
                     obj = fileWriter.writeFile(this.actionId,
                             null,
                             "Query result: "
-                                    + Util.firstNVideosMostViewed(show, this, shows, users));
+                                    + Util.firstNVideosMostViewed(this, shows, users));
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
                 break;
             case "num_ratings":
@@ -404,36 +396,40 @@ public class Action {
                     obj = fileWriter.writeFile(this.actionId,
                             null,
                             "Query result: "
-                                    + Util.firstUsers(show, this, users));
+                                    + Util.firstUsers(this, users));
                     arrayResult.add(obj);
-                } catch (IOException e) {
-                    System.out.println("not good 2");
+                } catch (IOException ignored) {
                 }
                 break;
 
 
+            default:
         }
     }
 
-    public void solveRecommendations(User user, Show show, Writer fileWriter,
-                             JSONArray arrayResult, List<Show> shows,
-                             List<User> users, List<Actor> actors) {
+    /**
+     * @param user this user
+     * @param fileWriter writer
+     * @param arrayResult for writing as JSON
+     * @param shows list of shows
+     * @param users list of users
+     */
+    public void solveRecommendations(final User user, final Writer fileWriter,
+                             final JSONArray arrayResult, final List<Show> shows,
+                             final List<User> users) {
         JSONObject obj;
         switch (this.type) {
             case "standard":
                 if (UtilRecommendation.standard(this, shows, users) == null) {
                     try {
-                        obj = fileWriter.writeFile(this.actionId,
-                                null,
+                        obj = fileWriter.writeFile(this.actionId, null,
                                 "StandardRecommendation cannot be applied!");
                         arrayResult.add(obj);
-                    } catch (IOException e) {
-                        System.out.println("not good 2");
+                    } catch (IOException ignored) {
                     }
                 } else {
                     try {
-                        obj = fileWriter.writeFile(this.actionId,
-                                null,
+                        obj = fileWriter.writeFile(this.actionId, null,
                                 "StandardRecommendation result: "
                                         + UtilRecommendation.standard(this, shows, users));
                         arrayResult.add(obj);
@@ -445,8 +441,7 @@ public class Action {
             case "best_unseen":
                 if (UtilRecommendation.bestUnseen(this, shows, users) == null) {
                     try {
-                        obj = fileWriter.writeFile(this.actionId,
-                                null,
+                        obj = fileWriter.writeFile(this.actionId, null,
                                 "BestRatedUnseenRecommendation cannot be applied!");
                         arrayResult.add(obj);
                     } catch (IOException e) {
@@ -454,8 +449,7 @@ public class Action {
                     }
                 } else {
                     try {
-                        obj = fileWriter.writeFile(this.actionId,
-                                null,
+                        obj = fileWriter.writeFile(this.actionId, null,
                                 "BestRatedUnseenRecommendation result: "
                                         + UtilRecommendation.bestUnseen(this, shows, users));
                         arrayResult.add(obj);
@@ -465,11 +459,10 @@ public class Action {
                 }
                 break;
             case "favorite":
-                if(user.getSubscriptionType().equals("PREMIUM")) {
+                if (user.getSubscriptionType().equals("PREMIUM")) {
                     if (UtilRecommendation.favorite(this, shows, users) == null) {
                         try {
-                            obj = fileWriter.writeFile(this.actionId,
-                                    null,
+                            obj = fileWriter.writeFile(this.actionId, null,
                                     "FavoriteRecommendation cannot be applied!");
                             arrayResult.add(obj);
                         } catch (IOException e) {
@@ -477,8 +470,7 @@ public class Action {
                         }
                     } else {
                         try {
-                            obj = fileWriter.writeFile(this.actionId,
-                                    null,
+                            obj = fileWriter.writeFile(this.actionId, null,
                                     "FavoriteRecommendation result: "
                                             + UtilRecommendation.favorite(this, shows, users));
                             arrayResult.add(obj);
@@ -486,11 +478,9 @@ public class Action {
                             System.out.println("not good 2");
                         }
                     }
-                }
-                else{
+                } else {
                     try {
-                        obj = fileWriter.writeFile(this.actionId,
-                                null,
+                        obj = fileWriter.writeFile(this.actionId, null,
                                 "FavoriteRecommendation cannot be applied!");
                         arrayResult.add(obj);
                     } catch (IOException e) {
@@ -499,11 +489,10 @@ public class Action {
                 }
                 break;
             case "popular":
-                if(user.getSubscriptionType().equals("PREMIUM")) {
+                if (user.getSubscriptionType().equals("PREMIUM")) {
                     if (UtilRecommendation.popular(this, shows, users) == null) {
                         try {
-                            obj = fileWriter.writeFile(this.actionId,
-                                    null,
+                            obj = fileWriter.writeFile(this.actionId, null,
                                     "PopularRecommendation cannot be applied!");
                             arrayResult.add(obj);
                         } catch (IOException e) {
@@ -511,8 +500,7 @@ public class Action {
                         }
                     } else {
                         try {
-                            obj = fileWriter.writeFile(this.actionId,
-                                    null,
+                            obj = fileWriter.writeFile(this.actionId, null,
                                     "PopularRecommendation result: "
                                             + UtilRecommendation.popular(this, shows, users));
                             arrayResult.add(obj);
@@ -520,11 +508,9 @@ public class Action {
                             System.out.println("not good 2");
                         }
                     }
-                }
-                else{
+                } else {
                     try {
-                        obj = fileWriter.writeFile(this.actionId,
-                                null,
+                        obj = fileWriter.writeFile(this.actionId, null,
                                 "PopularRecommendation cannot be applied!");
                         arrayResult.add(obj);
                     } catch (IOException e) {
@@ -533,21 +519,18 @@ public class Action {
                 }
                 break;
             case "search":
-                if(user.getSubscriptionType().equals("PREMIUM")) {
-                    if(UtilRecommendation.search(this, shows, users).isEmpty()){
+                if (user.getSubscriptionType().equals("PREMIUM")) {
+                    if (UtilRecommendation.search(this, shows, users).isEmpty()) {
                         try {
-                            obj = fileWriter.writeFile(this.actionId,
-                                    null,
+                            obj = fileWriter.writeFile(this.actionId, null,
                                     "SearchRecommendation cannot be applied!");
                             arrayResult.add(obj);
                         } catch (IOException e) {
                             System.out.println("not good 2");
                         }
-                    }
-                    else{
+                    } else {
                         try {
-                            obj = fileWriter.writeFile(this.actionId,
-                                    null,
+                            obj = fileWriter.writeFile(this.actionId, null,
                                     "SearchRecommendation result: "
                                             + UtilRecommendation.search(this, shows, users));
                             arrayResult.add(obj);
@@ -555,11 +538,9 @@ public class Action {
                             System.out.println("not good 2");
                         }
                     }
-                }
-                else{
+                } else {
                     try {
-                        obj = fileWriter.writeFile(this.actionId,
-                                null,
+                        obj = fileWriter.writeFile(this.actionId, null,
                                 "SearchRecommendation cannot be applied!");
                         arrayResult.add(obj);
                     } catch (IOException e) {
@@ -567,6 +548,7 @@ public class Action {
                     }
                 }
                 break;
+            default:
         }
     }
 

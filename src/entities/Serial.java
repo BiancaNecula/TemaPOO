@@ -3,9 +3,8 @@ package entities;
 import entertainment.Season;
 
 import java.util.ArrayList;
-import java.util.Map;
 
-public class Serial extends Show{
+public final class Serial extends Show {
     /**
      * Number of seasons
      */
@@ -15,9 +14,15 @@ public class Serial extends Show{
      */
     private final ArrayList<Season> seasons;
 
+    /**
+     * Duration in minutes of entire serial
+     */
     private int duration;
 
-    private int views;
+    /**
+     * Number of views
+     */
+    private int views = 0;
 
 
     public Serial(final String title, final ArrayList<String> cast,
@@ -43,16 +48,25 @@ public class Serial extends Show{
     }
 
     @Override
-    public void setViews(int views) {
+    public void setViews(final int views) {
         this.views = views;
     }
 
     @Override
     public int getDuration() {
-        for(Season s : this.getSeasons()){
+        for (Season s : this.getSeasons()) {
             duration += s.getDuration();
         }
         return duration;
+    }
+
+    @Override
+    public double getSumOfRatings() {
+        double avg = 0.0;
+        for (Season s : this.getSeasons()) {
+            avg += s.getSumOfRatings();
+        }
+        return avg / this.numberOfSeasons;
     }
 
     @Override

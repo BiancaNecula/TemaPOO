@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class User {
+public final class User {
     /**
      * User's username
      */
@@ -22,7 +22,7 @@ public class User {
      */
     private final ArrayList<String> favoriteMovies;
 
-    private Map<Map<String, Integer>, Double> rating = new HashMap<Map<String, Integer>, Double>();
+    private Map<Map<String, Integer>, Double> rating = new HashMap<>();
 
     public User(final String username, final String subscriptionType,
                          final Map<String, Integer> history,

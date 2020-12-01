@@ -22,9 +22,15 @@ public abstract class Show {
      */
     private final ArrayList<String> genres;
 
+    /**
+     * duration of show
+     */
     private int duration;
 
-    private int views;
+    /**
+     * number of views
+     */
+    private int views = 0;
 
     private ArrayList<Double> ratings = new ArrayList<>();
 
@@ -52,23 +58,49 @@ public abstract class Show {
         return genres;
     }
 
+    /**
+     * @return list of seasons
+     */
     public ArrayList<Season> getSeasons() {
         return null;
     }
 
+    /**
+     * @return list of ratings
+     */
     public ArrayList<Double> getRatings() {
         return ratings;
     }
 
+    /**
+     * @return duration in minutes of show
+     */
     public int getDuration() {
         return duration;
     }
 
+    /**
+     * @return number of views
+     */
     public int getViews() {
         return views;
     }
 
-    public void setViews(int views) {
+    /**
+     * @param views number of views
+     */
+    public void setViews(final int views) {
         this.views = views;
+    }
+
+    /**
+     * @return average of ratings
+     */
+    public double getSumOfRatings() {
+        if (ratings != null) {
+            return ratings.stream().mapToDouble(Double::doubleValue).sum() / ratings.size();
+        } else {
+            return 0.0;
+        }
     }
 }

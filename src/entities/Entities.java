@@ -1,29 +1,31 @@
 package entities;
 
 import common.Constants;
-import fileio.*;
+
+import fileio.Writer;
+import fileio.Input;
 import org.json.simple.JSONArray;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Entities {
-    List<Action> commands = new ArrayList<>();
-    List<Action> queries = new ArrayList<>();
-    List<Action> recommendations = new ArrayList<>();
-    List<Actor> actors = new ArrayList<>();
-    List<User> users = new ArrayList<>();
-    List<Movie> movies = new ArrayList<>();
-    List<Serial> serials = new ArrayList<>();
-    List<Show> shows = new ArrayList<>();
-    Writer fileWritter;
-    JSONArray arrayResult;
+public final class Entities {
+    private final List<Action> commands = new ArrayList<>();
+    private final List<Action> queries = new ArrayList<>();
+    private final List<Action> recommendations = new ArrayList<>();
+    private final List<Actor> actors = new ArrayList<>();
+    private final List<User> users = new ArrayList<>();
+    private final List<Movie> movies = new ArrayList<>();
+    private final List<Serial> serials = new ArrayList<>();
+    private final List<Show> shows;
+    private final Writer fileWriter;
+    private final JSONArray arrayResult;
 
-    public Entities(Input input, Writer fileWriter, JSONArray arrayResult) {
-        this.fileWritter = fileWriter;
+    public Entities(final Input input, final Writer fileWriter, final JSONArray arrayResult) {
+        this.fileWriter = fileWriter;
         this.arrayResult = arrayResult;
         for (int i = 0; i < input.getUsers().size(); i++) {
             users.add(new User(input.getUsers().get(i).getUsername(),
@@ -87,51 +89,65 @@ public class Entities {
             }
         }
         shows = Stream.of(movies, serials)
-                .flatMap(x -> x.stream())
-                .collect(Collectors.toList());;
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
-    public void solve(Input input) {
+    /**
+     * @param input input
+     */
+    public void solve(final Input input) {
         int j = 0, z = 0, t = 0;
         for (int i = 0; i < input.getCommands().size(); i++) {
             String actionType = input.getCommands().get(i).getActionType();
-            if(actionType.equals(Constants.COMMAND)){
-                commands.get(j).solveCommand(findUser(commands.get(j).getUsername()),
-                        findShow(commands.get(j).getTitle()), fileWritter, arrayResult);
-                j++;
-            }
-            else if(actionType.equals(Constants.QUERY)){
-                queries.get(z).solveQueries(findUser(queries.get(z).getUsername()),
-                        findShow(queries.get(z).getTitle()), fileWritter, arrayResult, shows, users, actors);
-                z++;
-            }
-            else if(actionType.equals(Constants.RECOMMENDATION)){
-                recommendations.get(t).solveRecommendations(findUser(recommendations.get(t).getUsername()),
-                        findShow(recommendations.get(t).getTitle()), fileWritter, arrayResult, shows, users, actors);
-                t++;
+            switch (actionType) {
+                case Constants.COMMAND -> {
+                    commands.get(j).solveCommand(findUser(commands.get(j).getUsername()),
+                            findShow(commands.get(j).getTitle()), fileWriter, arrayResult);
+                    j++;
+                }
+                case Constants.QUERY -> {
+                    queries.get(z).solveQueries(fileWriter, arrayResult, shows, users, actors);
+                    z++;
+                }
+                case Constants.RECOMMENDATION -> {
+                    recommendations.get(t).solveRecommendations(
+                            findUser(recommendations.get(t).getUsername()),
+                            fileWriter, arrayResult, shows, users);
+                    t++;
+                }
+                default -> { }
             }
 
         }
     }
 
-    public User findUser(String username) {
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getUsername().equals(username)) {
-                return users.get(i);
+    /**
+     * @param username user's name
+     * @return the user with this name
+     */
+    public User findUser(final String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return user;
             }
         }
         return null;
     }
 
-    public Show findShow(String title) {
-        for (int i = 0; i < movies.size(); i++) {
-            if (movies.get(i).getTitle().equals(title)) {
-                return movies.get(i);
+    /**
+     * @param title title of show
+     * @return the show with this title
+     */
+    public Show findShow(final String title) {
+        for (Movie movie : movies) {
+            if (movie.getTitle().equals(title)) {
+                return movie;
             }
         }
-        for (int i = 0; i < serials.size(); i++) {
-            if (serials.get(i).getTitle().equals(title)) {
-                return serials.get(i);
+        for (Serial serial : serials) {
+            if (serial.getTitle().equals(title)) {
+                return serial;
             }
         }
         return null;

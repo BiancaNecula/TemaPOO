@@ -4,15 +4,15 @@ import entertainment.Season;
 
 import java.util.ArrayList;
 
-public class Movie extends Show{
+public final class Movie extends Show {
     /**
-            * Duration in minutes of a season
+     * Duration in minutes of a season
      */
     private final int duration;
 
-    private int views;
+    private int views = 0;
 
-    private ArrayList<Double> ratings = new ArrayList<Double>();
+    private final ArrayList<Double> ratings = new ArrayList<>();
 
     public Movie(final String title, final ArrayList<String> cast,
                           final ArrayList<String> genres, final int year,
@@ -44,12 +44,21 @@ public class Movie extends Show{
     }
 
     @Override
+    public double getSumOfRatings() {
+        if (ratings != null && ratings.size() != 0) {
+            return ratings.stream().mapToDouble(Double::doubleValue).sum() / ratings.size();
+        } else {
+            return 0.0;
+        }
+    }
+
+    @Override
     public int getViews() {
         return views;
     }
 
     @Override
-    public void setViews(int views) {
+    public void setViews(final int views) {
         this.views = views;
     }
 }

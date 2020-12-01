@@ -44,6 +44,17 @@ public final class Season {
         this.ratings = ratings;
     }
 
+    /**
+     * @return average of ratings
+     */
+    public double getSumOfRatings() {
+        if (ratings != null && ratings.size() != 0) {
+            return ratings.stream().mapToDouble(Double::doubleValue).sum() / ratings.size();
+        } else {
+            return 0.0;
+        }
+    }
+
     @Override
     public String toString() {
         return "Episode{"
