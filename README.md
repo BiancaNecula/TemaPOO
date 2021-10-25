@@ -9,9 +9,11 @@ Faculty of Automatic Control and Computer Science \
 
 # Info
 ```bash
-git clone https://github.com/BiancaNecula/TemaPOO.git
+git clone https://github.com/BiancaNecula/VideosDB.git
 ```
-https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema
+https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema \
+This project is the implementation of an IMDB-like application written in Java, that provides information about movies and series. Users can receive personalized recommendations based on their preferences. \
+The platform simulates actions that users can take on a movie viewing platform: ratings, movie viewing, searches, recommendations, etc.
 
 # About the code
 
